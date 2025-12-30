@@ -1,7 +1,7 @@
 {
     "Group": "Darkhax",
     "Name": "Spellbook",
-    "Version": "0.0.1",
+    "Version": "0.0.2",
     "Description": "Powering your favorite mods with clean, reusable helpers and utilities.",
     "Authors": [
         {
@@ -11,10 +11,12 @@
     "Website": "darkhax.net",
     "ServerVersion": "*",
     "Dependencies": {
+        "Hytale:InteractionModule": "*"
     },
     "OptionalDependencies": {
+        
     },
     "DisabledByDefault": false,
-    "Main": "net.darkhax.spellbook.Spellbook",
+    "Main": "net.darkhax.spellbook.impl.Spellbook",
     "IncludesAssetPack": true
 }

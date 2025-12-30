@@ -1,0 +1,48 @@
+{
+  "TranslationProperties": {
+    "Name": "Test: Item Generator"
+  },
+  "Icon": "Icons/ItemsGenerated/Darkhax_Spellbook_TestGenerator.png",
+  "PlayerAnimationsId": "Block",
+  "BlockType": {
+    "Material": "Solid",
+    "DrawType": "Cube",
+    "Textures": [
+      {
+        "All": "BlockTextures/Darkhax_Spellbook_Test.png",
+        "Weight": 1,
+        "North": "BlockTextures/Darkhax_Spellbook_Test_Green.png"
+      }
+    ],
+    "State": {
+      "Id": "DarkhaxSpellbookItemGenerator",
+      "Output": {
+        "Type": "Item",
+        "ItemId": "Soil_Dirt",
+        "Quantity": 1
+      },
+      "ExportFaces": [
+        "North"
+      ],
+      "Cooldown": {
+        "Min": 100,
+        "Max": 100
+      },
+      "DropOverflow": false
+    },
+    "VariantRotation": "NESW",
+    "FlipType": "Symmetric"
+  },
+  "IconProperties": {
+    "Scale": 0.6,
+    "Rotation": [
+      0,
+      197,
+      335
+    ],
+    "Translation": [
+      6,
+      -15
+    ]
+  }
+}
