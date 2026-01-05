@@ -1,0 +1,17 @@
+{
+  "TranslationProperties": {
+    "Name": "Test"
+  },
+  "Model": "Resources/Plants/Plant_Fibers.blockymodel",
+  "Texture": "Resources/Plants/Plant_Fibers_Texture.png",
+  "Icon": "Icons/ItemsGenerated/Ingredient_Fibre.png",
+  "Interactions": {
+    "Use": {
+      "Interactions": [
+        {
+          "Type": "DarkhaxSpellbookWarpHome"
+        }
+      ]
+    }
+  }
+}

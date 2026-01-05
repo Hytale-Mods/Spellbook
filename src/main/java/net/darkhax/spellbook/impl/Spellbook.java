@@ -1,6 +1,7 @@
 package net.darkhax.spellbook.impl;
 
 import com.hypixel.hytale.logger.HytaleLogger;
+import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.universe.world.meta.BlockStateRegistry;
@@ -8,6 +9,7 @@ import net.darkhax.spellbook.api.block.state.ItemGeneratorState;
 import net.darkhax.spellbook.api.codec.output.DropListOutput;
 import net.darkhax.spellbook.api.codec.output.IdOutput;
 import net.darkhax.spellbook.api.codec.output.ItemOutput;
+import net.darkhax.spellbook.api.interaction.WarpHomeInteraction;
 import net.darkhax.spellbook.api.test.TestHelper;
 import net.darkhax.spellbook.test.SpellbookTests;
 
@@ -31,6 +33,11 @@ public class Spellbook extends JavaPlugin {
         itemOutputCodec.register(IdOutput.ID, IdOutput.class, IdOutput.CODEC);
         itemOutputCodec.register(DropListOutput.ID, DropListOutput.class, DropListOutput.CODEC);
 
+        // Interaction
+        final var interactions = this.getCodecRegistry(Interaction.CODEC);
+        interactions.register(idPascal("WarpHome"), WarpHomeInteraction.class, WarpHomeInteraction.CODEC);
+
+        // BlockState
         final BlockStateRegistry blockStateRegistry = this.getBlockStateRegistry();
         blockStateRegistry.registerBlockState(ItemGeneratorState.class, idPascal("ItemGenerator"), ItemGeneratorState.CODEC, ItemGeneratorState.Data.class, ItemGeneratorState.Data.CODEC);
     }
