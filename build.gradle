@@ -1,7 +1,15 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
+import java.time.ZoneOffset
+
 plugins {
     id 'java'
     id 'org.jetbrains.gradle.plugin.idea-ext' version '1.3'
 }
+
+def buildDate = ZonedDateTime.now(ZoneOffset.UTC)
+version = String.format("%d.%d.%d-%d", buildDate.year, buildDate.monthValue, buildDate.dayOfMonth, buildDate.toLocalTime().toSecondOfDay())
 
 ext {
     hytaleHome = "${System.getProperty("user.home")}/AppData/Roaming/Hytale"
@@ -52,21 +60,42 @@ tasks.named('processResources') {
     dependsOn 'updatePluginManifest'
 }
 
+processResources {
+    doLast {
+        def jsonMinifyStart = System.currentTimeMillis()
+        def jsonMinified = 0
+        def jsonBytesSaved = 0
+        fileTree(dir: outputs.files.asPath, include: ['**/*.json', '**/*.mcmeta']).each {
+            try {
+                def oldLength = it.length()
+                it.text = JsonOutput.toJson(new JsonSlurper().parse(it))
+                jsonBytesSaved += oldLength - it.length()
+                jsonMinified++
+            }
+            catch (Exception e) {
+                project.logger.error("Failed to minify file '${it.path}'.")
+                throw e
+            }
+        }
+        project.logger.lifecycle("Minified ${jsonMinified} files. Saved ${jsonBytesSaved} bytes before compression. Took ${System.currentTimeMillis() - jsonMinifyStart}ms.")
+    }
+}
+
 // Creates a run configuration in IDEA that will run the Hytale server with
 // your plugin and the default assets.
 idea.project.settings.runConfigurations {
     'HytaleServer'(org.jetbrains.gradle.ext.Application) {
         mainClass = 'com.hypixel.hytale.Main'
         moduleName = project.idea.module.name + '.main'
-        programParameters = "--allow-op --assets=$hytaleHome/install/$patchline/package/game/latest/Assets.zip"
-        if (includes_pack) {
+        programParameters = "--allow-op --assets=$hytaleHome/install/$patchline/package/game/latest/Assets.zip --accept-early-plugins"
+        if (includes_pack.toBoolean()) {
             programParameters += " --mods=${sourceSets.main.java.srcDirs.first().parentFile.absolutePath}"
         }
-        if (load_user_mods) {
+        if (load_user_mods.toBoolean()) {
             programParameters += " --mods=$hytaleHome/UserData/Mods"
         }
-        if (use_insecure_auth) {
-            programParameters += " --auth-mode insecure"
+        if (use_insecure_auth.toBoolean()) {
+            programParameters += " --auth-mode=insecure"
         }
         workingDirectory = serverRunDir.absolutePath
     }

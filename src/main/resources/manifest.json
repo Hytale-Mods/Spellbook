@@ -1,21 +1,22 @@
 {
-  "Group": "Darkhax",
-  "Name": "Spellbook",
-  "Version": "0.0.2",
-  "Description": "Powering your favorite mods with clean, reusable helpers and utilities.",
-  "Authors": [
-    {
-      "Name": "Darkhax"
-    }
-  ],
-  "Website": "darkhax.net",
-  "ServerVersion": "*",
-  "Dependencies": {
-    "Hytale:InteractionModule": "*"
-  },
-  "OptionalDependencies": {
-  },
-  "DisabledByDefault": false,
-  "Main": "net.darkhax.spellbook.impl.Spellbook",
-  "IncludesAssetPack": true
+    "Group": "Darkhax",
+    "Name": "Spellbook",
+    "Version": "2026.1.5-3716",
+    "Description": "Powering your favorite mods with clean, reusable helpers and utilities.",
+    "Authors": [
+        {
+            "Name": "Darkhax"
+        }
+    ],
+    "Website": "https://www.curseforge.com/hytale/mods/spellbook",
+    "ServerVersion": "*",
+    "Dependencies": {
+        "Hytale:InteractionModule": "*"
+    },
+    "OptionalDependencies": {
+        
+    },
+    "DisabledByDefault": false,
+    "Main": "net.darkhax.spellbook.impl.Spellbook",
+    "IncludesAssetPack": true
 }
