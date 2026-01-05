@@ -17,6 +17,12 @@ import java.math.BigDecimal;
 
 public class BsonHelper {
 
+    /**
+     * A naive attempt to parse a BsonValue from a string. Primarily suitable for testing.
+     *
+     * @param input The input string. Can be a JSON primitive, array, or object.
+     * @return The parsed value.
+     */
     public static BsonValue parseValue(String input) {
         input = input.trim();
         if (input.isEmpty() || input.equalsIgnoreCase("null")) {
@@ -41,12 +47,18 @@ public class BsonHelper {
         return new BsonString(input);
     }
 
-    public static BsonNumber parseNumber(String s) {
+    /**
+     * Parse a string into a BsonNumber.
+     *
+     * @param string The string to parse.
+     * @return A BsonNumber representing the parsed number.
+     */
+    public static BsonNumber parseNumber(String string) {
         try {
-            if (s.contains(".") || s.contains("e") || s.contains("E")) {
-                return new BsonDouble(Double.parseDouble(s));
+            if (string.contains(".") || string.contains("e") || string.contains("E")) {
+                return new BsonDouble(Double.parseDouble(string));
             }
-            final long l = Long.parseLong(s);
+            final long l = Long.parseLong(string);
             if (l >= Integer.MIN_VALUE && l <= Integer.MAX_VALUE) {
                 return new BsonInt32((int) l);
             }
@@ -54,7 +66,7 @@ public class BsonHelper {
 
         }
         catch (NumberFormatException e) {
-            return new BsonDecimal128(new Decimal128(new BigDecimal(s)));
+            return new BsonDecimal128(new Decimal128(new BigDecimal(string)));
         }
     }
 }

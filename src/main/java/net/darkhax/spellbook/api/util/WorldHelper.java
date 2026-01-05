@@ -69,6 +69,13 @@ public class WorldHelper {
         return Rotation.values()[ordinal];
     }
 
+    /**
+     * Drops items in the world at a given position.
+     *
+     * @param world    The world to spawn the items in.
+     * @param drops    The items to drop.
+     * @param position The position to spawn the items at.
+     */
     public static void dropItems(World world, List<ItemStack> drops, Vector3d position) {
         final Store<EntityStore> store = world.getEntityStore().getStore();
         if (store != null && !drops.isEmpty()) {
@@ -77,6 +84,14 @@ public class WorldHelper {
         }
     }
 
+    /**
+     * Drops items in the world at a given position.
+     *
+     * @param drops         The items to drop.
+     * @param position      The position to spawn the items at.
+     * @param store         The entity store to add the items to.
+     * @param commandBuffer A buffer to add the items to.
+     */
     public static void dropItems(List<ItemStack> drops, Vector3d position, @Nonnull Store<EntityStore> store, @Nonnull CommandBuffer<EntityStore> commandBuffer) {
         if (!drops.isEmpty()) {
             Holder<EntityStore>[] dropHolder = ItemComponent.generateItemDrops(store, drops, position.clone(), Vector3f.ZERO.clone());
