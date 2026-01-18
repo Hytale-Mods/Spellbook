@@ -33,14 +33,14 @@ public class WarpHomeInteraction extends SimpleInstantInteraction {
         final Ref<EntityStore> ref = context.getEntity();
         final CommandBuffer<EntityStore> commandBuffer = context.getCommandBuffer();
         if (EntityUtils.getEntity(ref, commandBuffer) instanceof Player player) {
-            final Transform transform = getClosestRespawnPoint(player, commandBuffer);
-            if (transform != null) {
-                commandBuffer.addComponent(player.getReference(), Teleport.getComponentType(), new Teleport(null, transform));
+            final Vector3d position = getClosestRespawnPoint(player, commandBuffer);
+            if (position != null) {
+                commandBuffer.addComponent(player.getReference(), Teleport.getComponentType(), new Teleport(position, Vector3f.ZERO));
             }
         }
     }
 
-    private static Transform getClosestRespawnPoint(Player player, ComponentAccessor<EntityStore> componentAccessor) {
+    private static Vector3d getClosestRespawnPoint(Player player, ComponentAccessor<EntityStore> componentAccessor) {
         final World world = player.getWorld();
         final Ref<EntityStore> ref = player.getReference();
         final PlayerConfigData playerData = player.getPlayerConfigData();
@@ -54,11 +54,10 @@ public class WarpHomeInteraction extends SimpleInstantInteraction {
                     final Vector3d posB = b.getRespawnPosition();
                     return Double.compare(playerPos.distanceSquaredTo(posA.x, playerPos.y, posA.z), playerPos.distanceSquaredTo(posB.x, playerPos.y, posB.z));
                 });
-                return new Transform((nearestPos.get()).getRespawnPosition());
+                return nearestPos.get().getRespawnPosition();
             }
         }
         final Transform worldSpawnPoint = world.getWorldConfig().getSpawnProvider().getSpawnPoint(ref, componentAccessor);
-        worldSpawnPoint.setRotation(Vector3f.ZERO);
-        return worldSpawnPoint;
+        return worldSpawnPoint.getPosition();
     }
 }
