@@ -13,6 +13,7 @@ import net.darkhax.spellbook.api.codec.output.ItemOutput;
 import net.darkhax.spellbook.api.interaction.BlockPushInteraction;
 import net.darkhax.spellbook.api.interaction.WarpHomeInteraction;
 import net.darkhax.spellbook.api.test.TestHelper;
+import net.darkhax.spellbook.impl.command.RootCommand;
 import net.darkhax.spellbook.test.SpellbookTests;
 
 import javax.annotation.Nonnull;
@@ -44,6 +45,9 @@ public class Spellbook extends JavaPlugin {
         final BlockStateRegistry blockStateRegistry = this.getBlockStateRegistry();
         blockStateRegistry.registerBlockState(ItemGeneratorState.class, idPascal("ItemGenerator"), ItemGeneratorState.CODEC, ItemGeneratorState.Data.class, ItemGeneratorState.Data.CODEC);
         blockStateRegistry.registerBlockState(ConveyorState.class, idPascal("Conveyor"), ConveyorState.CODEC, ConveyorState.Data.class, ConveyorState.Data.CODEC);
+
+        // Commands
+        this.getCommandRegistry().registerCommand(new RootCommand());
     }
 
     @Override
