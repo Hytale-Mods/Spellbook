@@ -68,7 +68,7 @@ public class IdOutput implements ItemOutput {
     @Override
     public void output(Consumer<ItemStack> consumer) {
         if (!"Empty".equals(this.itemId)) {
-            consumer.accept(new ItemStack(this.itemId, MathsHelper.fromRange(this.amount), this.metadata));
+            consumer.accept(new ItemStack(this.itemId, MathsHelper.fromRange(this.amount), (this.metadata == null || this.metadata.isEmpty()) ? null : this.metadata));
         }
     }
 }
