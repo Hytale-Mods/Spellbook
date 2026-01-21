@@ -65,8 +65,7 @@ public class ItemGeneratorState extends BlockState implements TickableBlockState
             for (AdjacentSide side : this.data.exportFaces) {
                 boolean exportedItems = false;
                 final Vector3i exportPos = new Vector3i(pos.x, pos.y, pos.z).add(WorldHelper.rotate(side, this.getRotationIndex()).relativePosition);
-                final WorldChunk chunk = world.getChunkIfInMemory(ChunkUtil.indexChunkFromBlock(exportPos.x, exportPos.z));
-                if (chunk != null && chunk.getState(exportPos.x, exportPos.y, exportPos.z) instanceof ItemContainerState containerState) {
+                if (world.getState(exportPos.x, exportPos.y, exportPos.z, true) instanceof ItemContainerState containerState) {
                     for (ItemStack stack : this.data.output.outputList()) {
                         final ItemStackTransaction transaction = containerState.getItemContainer().addItemStack(stack);
                         final ItemStack remainder = transaction.getRemainder();
