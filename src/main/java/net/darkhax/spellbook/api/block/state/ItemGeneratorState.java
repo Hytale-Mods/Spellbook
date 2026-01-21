@@ -6,8 +6,7 @@ import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.ArchetypeChunk;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Store;
-import com.hypixel.hytale.math.util.ChunkUtil;
-import com.hypixel.hytale.math.util.HashUtil;
+import com.hypixel.hytale.math.util.MathUtil;
 import com.hypixel.hytale.math.vector.Vector3i;
 import com.hypixel.hytale.protocol.BlockPosition;
 import com.hypixel.hytale.protocol.Rangef;
@@ -16,9 +15,7 @@ import com.hypixel.hytale.server.core.asset.type.blocktype.config.StateData;
 import com.hypixel.hytale.server.core.codec.ProtocolCodecs;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.inventory.transaction.ItemStackTransaction;
-import com.hypixel.hytale.server.core.modules.time.WorldTimeResource;
 import com.hypixel.hytale.server.core.universe.world.World;
-import com.hypixel.hytale.server.core.universe.world.chunk.WorldChunk;
 import com.hypixel.hytale.server.core.universe.world.chunk.state.TickableBlockState;
 import com.hypixel.hytale.server.core.universe.world.connectedblocks.ConnectedBlockPatternRule.AdjacentSide;
 import com.hypixel.hytale.server.core.universe.world.meta.BlockState;
@@ -27,20 +24,16 @@ import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import net.darkhax.spellbook.api.codec.Codecs;
 import net.darkhax.spellbook.api.codec.output.IdOutput;
 import net.darkhax.spellbook.api.codec.output.ItemOutput;
+import net.darkhax.spellbook.api.util.MathsHelper;
 import net.darkhax.spellbook.api.util.WorldHelper;
-
-import java.time.Duration;
-import java.time.Instant;
 
 public class ItemGeneratorState extends BlockState implements TickableBlockState {
 
     public static final BuilderCodec<ItemGeneratorState> CODEC = BuilderCodec.builder(ItemGeneratorState.class, ItemGeneratorState::new, BlockState.BASE_CODEC)
-            .append(new KeyedCodec<>("StartTime", Codec.INSTANT, true), (i, v) -> i.startTime = v, i -> i.startTime).add()
-            .append(new KeyedCodec<>("Timer", Codec.DOUBLE, true), (i, v) -> i.timer = v, i -> i.timer).add()
+            .append(new KeyedCodec<>("RemainingTicks", Codec.INTEGER, true), (i, v) -> i.remainingTicks = v, i -> i.remainingTicks).add()
             .build();
 
-    protected Instant startTime;
-    protected double timer = -1;
+    protected int remainingTicks = Integer.MAX_VALUE;
     protected Data data;
 
     @Override
@@ -55,11 +48,10 @@ public class ItemGeneratorState extends BlockState implements TickableBlockState
     @Override
     public void tick(float dt, int index, ArchetypeChunk<ChunkStore> archeChunk, Store<ChunkStore> store, CommandBuffer<ChunkStore> commandBuffer) {
         final World world = store.getExternalData().getWorld();
-        final Instant currentTime = world.getEntityStore().getStore().getResource(WorldTimeResource.getResourceType()).getGameTime();
-        if (startTime == null || startTime.isAfter(currentTime) || timer <= 0) {
-            this.reset(currentTime);
+        if (this.remainingTicks > this.data.duration.max) {
+            this.reset();
         }
-        else if (timer > 0 && Duration.between(startTime, currentTime).getSeconds() >= timer) {
+        else if (this.remainingTicks <= 0) {
             final Vector3i generatorPos = this.getBlockPosition();
             final BlockPosition pos = world.getBaseBlock(new BlockPosition(generatorPos.x, generatorPos.y, generatorPos.z));
             for (AdjacentSide side : this.data.exportFaces) {
@@ -78,13 +70,15 @@ public class ItemGeneratorState extends BlockState implements TickableBlockState
                     break;
                 }
             }
-            this.reset(currentTime);
+            this.reset();
+        }
+        else {
+            this.remainingTicks--;
         }
     }
 
-    protected void reset(Instant currentTime) {
-        startTime = currentTime;
-        timer = data.duration.min + (data.duration.max - data.duration.min) * HashUtil.random(startTime.getEpochSecond(), this.getBlockX(), this.getBlockY(), this.getBlockZ());
+    protected void reset() {
+        this.remainingTicks = MathUtil.ceil(data.duration.min + (data.duration.max - data.duration.min) * MathsHelper.RNG.nextFloat());
     }
 
     public static class Data extends StateData {
