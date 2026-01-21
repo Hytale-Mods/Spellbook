@@ -1,6 +1,6 @@
 {
   "TranslationProperties": {
-    "Name": "Test"
+    "Name": "Interaction Test"
   },
   "Model": "Resources/Plants/Plant_Fibers.blockymodel",
   "Texture": "Resources/Plants/Plant_Fibers_Texture.png",
