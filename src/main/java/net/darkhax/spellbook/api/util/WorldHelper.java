@@ -4,16 +4,12 @@ import com.hypixel.hytale.component.AddReason;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Holder;
 import com.hypixel.hytale.component.Store;
+import com.hypixel.hytale.math.util.ChunkUtil;
 import com.hypixel.hytale.math.vector.Vector3d;
 import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.math.vector.Vector3i;
 import com.hypixel.hytale.protocol.Rotation;
-import com.hypixel.hytale.server.core.asset.type.gameplay.DeathConfig;
-import com.hypixel.hytale.server.core.entity.EntityUtils;
-import com.hypixel.hytale.server.core.entity.ItemUtils;
-import com.hypixel.hytale.server.core.entity.LivingEntity;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
-import com.hypixel.hytale.server.core.modules.entity.component.HeadRotation;
-import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.entity.item.ItemComponent;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.connectedblocks.ConnectedBlockPatternRule.AdjacentSide;
@@ -103,5 +99,28 @@ public class WorldHelper {
             Holder<EntityStore>[] dropHolder = ItemComponent.generateItemDrops(store, drops, position.clone(), Vector3f.ZERO.clone());
             commandBuffer.addEntities(dropHolder, AddReason.SPAWN);
         }
+    }
+
+    /**
+     * Determines if a range overlaps with a given section.
+     *
+     * @param sectionIndex The section index. Represents a 32 tall section of the world.
+     * @param minY         The minium of the range.
+     * @param maxY         The maximum of the range.
+     * @return If the range overlaps with the given section.
+     */
+    public static boolean isRangeInSection(int sectionIndex, int minY, int maxY) {
+        final int minRange = sectionIndex * 32;
+        return minRange >= minY && (minRange + 32) <= maxY;
+    }
+
+    /**
+     * Creates a vector representing the position of a block based on its index within a chunk section.
+     *
+     * @param blockIndex The index of a block within a chunk index.
+     * @return A vector representing the position of the block.
+     */
+    public static Vector3i getPositionFromBlockIndex(int blockIndex) {
+        return new Vector3i(ChunkUtil.xFromIndex(blockIndex), ChunkUtil.yFromIndex(blockIndex), ChunkUtil.zFromIndex(blockIndex));
     }
 }

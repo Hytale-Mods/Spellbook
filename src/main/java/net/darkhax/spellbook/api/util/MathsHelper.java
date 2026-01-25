@@ -22,4 +22,19 @@ public class MathsHelper {
         int high = (int) Math.floor(range.max);
         return low + RNG.nextInt(high - low + 1);
     }
+
+    /**
+     * Get a random int from an inclusive range.
+     *
+     * @param random The source of random.
+     * @param min    The lowest possible value.
+     * @param max    The highest possible value.
+     * @return A random number from the range of values.
+     */
+    public static int nextIntInclusive(Random random, int min, int max) {
+        if (min > max) {
+            throw new IllegalArgumentException("min must be <= max");
+        }
+        return random.nextInt(max - min + 1) + min;
+    }
 }
