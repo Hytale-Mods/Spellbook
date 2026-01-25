@@ -36,7 +36,10 @@ public class WarpHomeInteraction extends SimpleInstantInteraction {
                     final Vector3d oldPos = transform.getPosition().clone();
                     final Vector3f oldRotation = headRotation.getRotation().clone();
                     buffer.ensureAndGetComponent(ref, TeleportHistory.getComponentType()).append(world, oldPos, oldRotation, "Home");
-                    buffer.addComponent(ref, Teleport.getComponentType(), Teleport.createForPlayer(null, Player.getRespawnPosition(ref, world.getName(), buffer)));
+                    Player.getRespawnPosition(ref, world.getName(), buffer).thenAcceptAsync((homeTransform) -> {
+                        Teleport teleportComponent = Teleport.createForPlayer((World) null, homeTransform);
+                        buffer.addComponent(ref, Teleport.getComponentType(), teleportComponent);
+                    }, world);
                 }
             }
         }
