@@ -81,6 +81,15 @@ processResources {
     }
 }
 
+tasks.named('jar') {
+    from("${rootProject.projectDir}/LICENSE.md") {
+        rename { fileName ->
+            def projectName = rootProject.name.toLowerCase().replaceAll("\\s+", "_")
+            "license_${projectName}.txt"
+        }
+    }
+}
+
 // Creates a run configuration in IDEA that will run the Hytale server with
 // your plugin and the default assets.
 idea.project.settings.runConfigurations {
