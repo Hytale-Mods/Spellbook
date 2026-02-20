@@ -1,7 +1,7 @@
 {
     "Group": "Darkhax",
     "Name": "Spellbook",
-    "Version": "2026.2.18-85573",
+    "Version": "2026.2.20-126",
     "Description": "Powering your favorite mods with clean, reusable helpers and utilities.",
     "Authors": [
         {
@@ -9,7 +9,7 @@
         }
     ],
     "Website": "https://www.curseforge.com/hytale/mods/spellbook",
-    "ServerVersion": "2026.02.18-f3b8fff95",
+    "ServerVersion": "2026.02.19-1a311a592",
     "Dependencies": {
         "Hytale:InteractionModule": "*"
     },
