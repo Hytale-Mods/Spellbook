@@ -154,7 +154,7 @@ public class ConveyorState implements Component<ChunkStore> {
             final Store<EntityStore> entities = world.getEntityStore().getStore();
             final Vector3ic directionOffset = WorldHelper.rotate(conveyor.direction, blocks.getRotationIndex(localX, localY, localZ)).relativePosition;
             final Vector3d forceVec = new Vector3d((directionOffset.x() * 1.5f) * conveyor.force, (directionOffset.y() * 1.5f) * conveyor.force, (directionOffset.z() * 1.5f) * conveyor.force);
-            for (Ref<EntityStore> target : getAllEntitiesInBox(pos, conveyor.height, entities, conveyor.players, conveyor.entities, conveyor.items)) {
+            for (Ref<EntityStore> target : getAllEntitiesInBox(new Vector3i(pos.x, pos.y + 1, pos.z), conveyor.height, entities, conveyor.players, conveyor.entities, conveyor.items)) {
                 final Player player = entities.getComponent(target, Player.getComponentType());
                 if (player != null) {
                     if (!EntityHelper.isCrouching(entities, target)) {
