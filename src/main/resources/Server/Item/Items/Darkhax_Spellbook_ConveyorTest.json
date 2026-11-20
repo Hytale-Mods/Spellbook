@@ -11,13 +11,16 @@
   "PlayerAnimationsId": "Block",
   "Set": "Rock_Stone",
   "BlockType": {
-    "State": {
-      "Id": "DarkhaxSpellbookConveyor",
-      "Height": 0.99,
-      "Items": true,
-      "Entities": true,
-      "Players": true,
-      "Force": 0.1
+    "BlockEntity": {
+      "Components": {
+        "DarkhaxSpellbookConveyor": {
+          "Height": 0.99,
+          "Items": true,
+          "Entities": true,
+          "Players": true,
+          "Force": 0.1
+        }
+      }
     },
     "Material": "Solid",
     "DrawType": "Cube",

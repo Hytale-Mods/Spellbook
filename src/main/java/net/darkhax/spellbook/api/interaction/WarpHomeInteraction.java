@@ -4,8 +4,7 @@ import com.hypixel.hytale.builtin.teleport.components.TeleportHistory;
 import com.hypixel.hytale.codec.builder.BuilderCodec;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Ref;
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
+import com.hypixel.hytale.math.vector.Rotation3f;
 import com.hypixel.hytale.protocol.InteractionType;
 import com.hypixel.hytale.server.core.entity.InteractionContext;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -16,6 +15,7 @@ import com.hypixel.hytale.server.core.modules.interaction.interaction.CooldownHa
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.SimpleInstantInteraction;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import org.joml.Vector3d;
 
 import javax.annotation.Nonnull;
 
@@ -33,8 +33,8 @@ public class WarpHomeInteraction extends SimpleInstantInteraction {
             if (transform != null) {
                 final HeadRotation headRotation = buffer.getComponent(ref, HeadRotation.getComponentType());
                 if (headRotation != null) {
-                    final Vector3d oldPos = transform.getPosition().clone();
-                    final Vector3f oldRotation = headRotation.getRotation().clone();
+                    final Vector3d oldPos = new Vector3d(transform.getPosition());
+                    final Rotation3f oldRotation = new Rotation3f(headRotation.getRotation());
                     buffer.ensureAndGetComponent(ref, TeleportHistory.getComponentType()).append(world, oldPos, oldRotation, "Home");
                     Player.getRespawnPosition(ref, world.getName(), buffer).thenAcceptAsync((homeTransform) -> {
                         Teleport teleportComponent = Teleport.createForPlayer((World) null, homeTransform);

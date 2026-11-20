@@ -13,25 +13,28 @@
         "North": "BlockTextures/Darkhax_Spellbook_Test_Green.png"
       }
     ],
-    "State": {
-      "Id": "DarkhaxSpellbookItemGenerator",
-      "Output": {
-        "Type": "Item",
-        "ItemId": "Soil_Dirt",
-        "Amount": {
-          "Min": 1,
-          "Max": 1
+    "BlockEntity": {
+      "Components": {
+        "DarkhaxSpellbookItemGenerator": {
+          "Output": {
+            "Type": "Item",
+            "ItemId": "Soil_Dirt",
+            "Amount": {
+              "Min": 1,
+              "Max": 1
+            }
+          },
+          "ExportFaces": [
+            "North",
+            "South"
+          ],
+          "Cooldown": {
+            "Min": 100,
+            "Max": 100
+          },
+          "ExportOnce": false
         }
-      },
-      "ExportFaces": [
-        "North",
-        "South"
-      ],
-      "Cooldown": {
-        "Min": 100,
-        "Max": 100
-      },
-      "ExportOnce": false
+      }
     },
     "VariantRotation": "NESW"
   }
