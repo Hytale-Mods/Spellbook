@@ -6,7 +6,7 @@
   "Texture": "Resources/Plants/Plant_Fibers_Texture.png",
   "Icon": "Icons/ItemsGenerated/Ingredient_Fibre.png",
   "Interactions": {
-    "Use": {
+    "Secondary": {
       "Interactions": [
         {
           "Type": "DarkhaxSpellbookWarpHome"

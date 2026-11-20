@@ -3,19 +3,24 @@ package net.darkhax.spellbook.api.util;
 import com.hypixel.hytale.component.AddReason;
 import com.hypixel.hytale.component.CommandBuffer;
 import com.hypixel.hytale.component.Holder;
+import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.math.util.ChunkUtil;
-import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.math.vector.Vector3f;
-import com.hypixel.hytale.math.vector.Vector3i;
+import com.hypixel.hytale.math.vector.Rotation3f;
 import com.hypixel.hytale.protocol.Rotation;
 import com.hypixel.hytale.server.core.inventory.ItemStack;
 import com.hypixel.hytale.server.core.modules.entity.item.ItemComponent;
+import com.hypixel.hytale.server.core.util.FillerBlockUtil;
 import com.hypixel.hytale.server.core.universe.world.World;
+import com.hypixel.hytale.server.core.universe.world.chunk.section.BlockSection;
 import com.hypixel.hytale.server.core.universe.world.connectedblocks.ConnectedBlockPatternRule.AdjacentSide;
+import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
+import org.joml.Vector3d;
+import org.joml.Vector3i;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class WorldHelper {
@@ -81,7 +86,7 @@ public class WorldHelper {
     public static void dropItems(World world, List<ItemStack> drops, Vector3d position) {
         final Store<EntityStore> store = world.getEntityStore().getStore();
         if (store != null && !drops.isEmpty()) {
-            Holder<EntityStore>[] dropHolder = ItemComponent.generateItemDrops(store, drops, position.clone(), Vector3f.ZERO.clone());
+            Holder<EntityStore>[] dropHolder = ItemComponent.generateItemDrops(store, drops, new Vector3d(position), new Rotation3f());
             store.addEntities(dropHolder, AddReason.SPAWN);
         }
     }
@@ -96,7 +101,7 @@ public class WorldHelper {
      */
     public static void dropItems(List<ItemStack> drops, Vector3d position, @Nonnull Store<EntityStore> store, @Nonnull CommandBuffer<EntityStore> commandBuffer) {
         if (!drops.isEmpty()) {
-            Holder<EntityStore>[] dropHolder = ItemComponent.generateItemDrops(store, drops, position.clone(), Vector3f.ZERO.clone());
+            Holder<EntityStore>[] dropHolder = ItemComponent.generateItemDrops(store, drops, new Vector3d(position), new Rotation3f());
             commandBuffer.addEntities(dropHolder, AddReason.SPAWN);
         }
     }
@@ -122,5 +127,53 @@ public class WorldHelper {
      */
     public static Vector3i getPositionFromBlockIndex(int blockIndex) {
         return new Vector3i(ChunkUtil.xFromIndex(blockIndex), ChunkUtil.yFromIndex(blockIndex), ChunkUtil.zFromIndex(blockIndex));
+    }
+
+    /**
+     * Gets the block section that contains a given world position.
+     *
+     * @param world The world to look in.
+     * @param x     The x position of the block.
+     * @param y     The y position of the block.
+     * @param z     The z position of the block.
+     * @return The block section, or null if it is not loaded.
+     */
+    @Nullable
+    public static BlockSection getBlockSection(World world, int x, int y, int z) {
+        final Ref<ChunkStore> sectionRef = world.getChunkStore().getChunkSectionReferenceAtBlock(x, y, z);
+        return sectionRef != null && sectionRef.isValid() ? world.getChunkStore().getStore().getComponent(sectionRef, BlockSection.getComponentType()) : null;
+    }
+
+    /**
+     * Gets the position of the base block for a given position. Multi-block structures are made of a base block and
+     * filler blocks, and this resolves filler blocks back to their base.
+     *
+     * @param world The world to look in.
+     * @param pos   The position to resolve.
+     * @return The position of the base block, or the input position if it is not a filler block.
+     */
+    public static Vector3i getBaseBlock(World world, Vector3i pos) {
+        final BlockSection section = getBlockSection(world, pos.x, pos.y, pos.z);
+        if (section != null) {
+            final int filler = section.getFiller(pos.x, pos.y, pos.z);
+            if (filler != FillerBlockUtil.NO_FILLER) {
+                return new Vector3i(pos.x - FillerBlockUtil.unpackX(filler), pos.y - FillerBlockUtil.unpackY(filler), pos.z - FillerBlockUtil.unpackZ(filler));
+            }
+        }
+        return new Vector3i(pos);
+    }
+
+    /**
+     * Gets the rotation index of a block in the world.
+     *
+     * @param world The world to look in.
+     * @param x     The x position of the block.
+     * @param y     The y position of the block.
+     * @param z     The z position of the block.
+     * @return The rotation index of the block, or 0 if the block is not loaded.
+     */
+    public static int getRotationIndex(World world, int x, int y, int z) {
+        final BlockSection section = getBlockSection(world, x, y, z);
+        return section != null ? section.getRotationIndex(x, y, z) : 0;
     }
 }

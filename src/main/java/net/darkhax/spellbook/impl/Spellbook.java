@@ -1,10 +1,12 @@
 package net.darkhax.spellbook.impl;
 
+import com.hypixel.hytale.component.ComponentRegistryProxy;
+import com.hypixel.hytale.component.ComponentType;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
-import com.hypixel.hytale.server.core.universe.world.meta.BlockStateRegistry;
+import com.hypixel.hytale.server.core.universe.world.storage.ChunkStore;
 import net.darkhax.spellbook.api.block.state.ConveyorState;
 import net.darkhax.spellbook.api.block.state.ItemGeneratorState;
 import net.darkhax.spellbook.api.codec.output.DropListOutput;
@@ -25,6 +27,9 @@ public class Spellbook extends JavaPlugin {
 
     public static final HytaleLogger LOGGER = HytaleLogger.forEnclosingClass();
 
+    private static ComponentType<ChunkStore, ItemGeneratorState> itemGeneratorComponentType;
+    private static ComponentType<ChunkStore, ConveyorState> conveyorComponentType;
+
     public Spellbook(@Nonnull JavaPluginInit init) {
         super(init);
     }
@@ -41,10 +46,12 @@ public class Spellbook extends JavaPlugin {
         interactions.register(idPascal("WarpHome"), WarpHomeInteraction.class, WarpHomeInteraction.CODEC);
         interactions.register(idPascal("BlockPush"), BlockPushInteraction.class, BlockPushInteraction.CODEC);
 
-        // BlockState
-        final BlockStateRegistry blockStateRegistry = this.getBlockStateRegistry();
-        blockStateRegistry.registerBlockState(ItemGeneratorState.class, idPascal("ItemGenerator"), ItemGeneratorState.CODEC, ItemGeneratorState.Data.class, ItemGeneratorState.Data.CODEC);
-        blockStateRegistry.registerBlockState(ConveyorState.class, idPascal("Conveyor"), ConveyorState.CODEC, ConveyorState.Data.class, ConveyorState.Data.CODEC);
+        // Block components
+        final ComponentRegistryProxy<ChunkStore> chunkStoreRegistry = this.getChunkStoreRegistry();
+        itemGeneratorComponentType = chunkStoreRegistry.registerComponent(ItemGeneratorState.class, idPascal("ItemGenerator"), ItemGeneratorState.CODEC);
+        chunkStoreRegistry.registerSystem(new ItemGeneratorState.Ticking(itemGeneratorComponentType));
+        conveyorComponentType = chunkStoreRegistry.registerComponent(ConveyorState.class, idPascal("Conveyor"), ConveyorState.CODEC);
+        chunkStoreRegistry.registerSystem(new ConveyorState.Ticking(conveyorComponentType));
 
         // Commands
         this.getCommandRegistry().registerCommand(new RootCommand());
@@ -53,6 +60,14 @@ public class Spellbook extends JavaPlugin {
     @Override
     protected void start() {
         TestHelper.runTests(new SpellbookTests());
+    }
+
+    public static ComponentType<ChunkStore, ItemGeneratorState> getItemGeneratorComponentType() {
+        return itemGeneratorComponentType;
+    }
+
+    public static ComponentType<ChunkStore, ConveyorState> getConveyorComponentType() {
+        return conveyorComponentType;
     }
 
     public static String idPascal(String id) {
